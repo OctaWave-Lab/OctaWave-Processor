@@ -1,0 +1,18 @@
+# Ignore build artifacts
+.vscode/
+/build/
+/CMakeFiles/
+/CMakeCache.txt
+/Makefile
+/cmake_install.cmake
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore compiled binaries
+*.o
+*.a
+*.so
+*.dylib
+*.exe
