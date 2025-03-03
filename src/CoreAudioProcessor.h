@@ -1,12 +1,11 @@
-#ifndef AUDIO_PROCESSOR_H
-#define AUDIO_PROCESSOR_H
+#ifndef CORE_AUDIO_PROCESSOR_H
+#define CORE_AUDIO_PROCESSOR_H
 
 #include <string>
 
-// Function declaration for processing audio
-std::string processAudioFileInProcessor(const std::string& filePath);
+namespace OctaWave {
+    std::string processAudioFileInProcessor(const std::string& filePath);
+    int findDominantFrequency(const std::vector<int16_t>& audioData, int sampleRate);
+}
 
-// Function declaration for finding the dominant frequency
-int findDominantFrequency(const std::vector<int16_t>& audioData, int sampleRate);
-
-#endif // AUDIO_PROCESSOR_H
+#endif

@@ -4,16 +4,10 @@ project(OctaWaveProcessor)
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 
-# Add the library
-add_library(audio_processor STATIC
+# Create a STATIC library instead of an executable
+add_library(OctaWaveProcessor STATIC
         src/CoreAudioProcessor.cpp
 )
 
-# Include headers
-target_include_directories(audio_processor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
-
-# Add an executable
-add_executable(OctaWaveProcessor src/main.cpp)
-
-# Link the library to the executable
-target_link_libraries(OctaWaveProcessor audio_processor)
+# Ensure headers are available for inclusion
+target_include_directories(OctaWaveProcessor PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
