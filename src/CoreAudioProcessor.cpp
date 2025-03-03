@@ -2,7 +2,7 @@
 #include <vector>
 #include <cmath>
 #include <fstream>
-#include "AudioProcessor.h"
+#include "CoreAudioProcessor.h"
 using namespace std;
 
 #define PI 3.14159265358979323846
@@ -59,7 +59,7 @@ int findDominantFrequency(const std::vector<int16_t>& audioData, int sampleRate)
     return static_cast<int>(dominantFrequency);
 }
 
-string processAudioFile(const string& filePath) {
+std::string processAudioFileInProcessor(const std::string& filePath) {
     ifstream file(filePath, ios::binary);
     if (!file) {
         return "Error: File not found.";

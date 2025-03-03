@@ -4,11 +4,9 @@
 #include <string>
 
 // Function declaration for processing audio
-std::string processAudioFile(const std::string& filePath);
+std::string processAudioFileInProcessor(const std::string& filePath);
 
 // Function declaration for finding the dominant frequency
 int findDominantFrequency(const std::vector<int16_t>& audioData, int sampleRate);
-
-std::string processAudioFile(const std::string& filePath);
 
 #endif // AUDIO_PROCESSOR_H

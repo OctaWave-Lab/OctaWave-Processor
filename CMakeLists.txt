@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Add the library
 add_library(audio_processor STATIC
-    src/AudioProcessor.cpp
+        src/CoreAudioProcessor.cpp
 )
 
 # Include headers
