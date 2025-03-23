@@ -56,8 +56,6 @@ namespace OctaWave {
         return "Detected Frequency: " + std::to_string(dominantFreq) + " Hz";
     }
 
-    void fft(std::vector<std::complex<double>>& data);
-
     int findDominantFrequency(const std::vector<int16_t>& audioData, int sampleRate) {
         std::vector<std::complex<double>> complexData(audioData.begin(), audioData.end());
 
@@ -79,7 +77,7 @@ namespace OctaWave {
         LOGI("FFT Data Size: %zu", fftSize);
 
         // Apply FFT
-        fft(complexData);
+        fft(complexData, 0);
 
         // Find peak frequency
         int peakIndex = 0;
@@ -98,21 +96,36 @@ namespace OctaWave {
         return static_cast<int>(dominantFrequency);
     }
 
-    void fft(std::vector<std::complex<double>>& data) {
+    void fft(std::vector<std::complex<double>>& data, size_t depth) {
         size_t n = data.size();
-        if (n <= 1) return;
+        if (n <= 1 || depth > 20) return; // Added depth limit for safety
 
-        std::vector<std::complex<double>> even(n / 2), odd(n / 2);
+        // Reserve memory to minimize reallocations
+        std::vector<std::complex<double>> even;
+        std::vector<std::complex<double>> odd;
+        even.reserve(n / 2);
+        odd.reserve(n / 2);
+
+        // Split data into even and odd parts
         for (size_t i = 0; i < n / 2; i++) {
-            even[i] = data[i * 2];
-            odd[i] = data[i * 2 + 1];
+            even.push_back(data[i * 2]);
+            odd.push_back(data[i * 2 + 1]);
         }
 
-        fft(even);
-        fft(odd);
+        // Recursive FFT calls
+        fft(even, depth + 1);
+        fft(odd, depth + 1);
 
+        // Pre-compute polar values for performance
+        double angle = -2.0 * PI / static_cast<double>(n);
+        std::vector<std::complex<double>> twiddleFactors(n / 2);
         for (size_t i = 0; i < n / 2; i++) {
-            std::complex<double> t = std::polar(1.0, -2 * PI * i / n) * odd[i];
+            twiddleFactors[i] = std::polar(1.0, angle * i);
+        }
+
+        // Combine results
+        for (size_t i = 0; i < n / 2; i++) {
+            std::complex<double> t = twiddleFactors[i] * odd[i];
             data[i] = even[i] + t;
             data[i + n / 2] = even[i] - t;
         }
