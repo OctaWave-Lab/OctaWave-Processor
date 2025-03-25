@@ -9,7 +9,7 @@
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
 
 #define PI 3.14159265358979323846
-#define SAMPLE_WINDOW_SIZE 1024 // Improved sample size for FFT performance
+#define SAMPLE_WINDOW_SIZE 2048
 
 namespace OctaWave {
 
@@ -52,6 +52,7 @@ namespace OctaWave {
 
         int dominantFreq = findDominantFrequency(audioDataChunk, sampleRate);
         LOGI("Detected Frequency: %d Hz", dominantFreq);
+        LOGI("* * * * * the end of the chunk * * * * *");
 
         return "Detected Frequency: " + std::to_string(dominantFreq) + " Hz";
     }
@@ -69,20 +70,24 @@ namespace OctaWave {
         LOGI("Normalized Data Applied");
 
         // Resize data to nearest power of 2 for FFT
-        size_t dataSize = complexData.size();
         size_t fftSize = 1;
-        while (fftSize < dataSize) fftSize *= 2;
+        while (fftSize < audioData.size()) fftSize *= 2;
+        fftSize = std::max<size_t>(fftSize, SAMPLE_WINDOW_SIZE);  // Ensures FFT accuracy for small buffers
+        complexData.resize(fftSize, 0);
 
-        complexData.resize(fftSize, 0);  // Zero-pad for optimal FFT
         LOGI("FFT Data Size: %zu", fftSize);
 
         // Apply FFT
         fft(complexData, 0);
 
         // Find peak frequency
-        int peakIndex = 0;
+        int peakIndex = 1;
         double maxMagnitude = 0.0;
-        for (size_t i = 0; i < fftSize / 2; i++) {
+
+        for (size_t i = 1; i < fftSize / 2; i++) {
+            double frequency = (i * sampleRate) / static_cast<double>(fftSize);
+            if (frequency < 20 || frequency > 20000) continue;  // Ignore invalid ranges
+
             double magnitude = std::abs(complexData[i]);
             if (magnitude > maxMagnitude) {
                 maxMagnitude = magnitude;
@@ -130,6 +135,6 @@ namespace OctaWave {
             data[i + n / 2] = even[i] - t;
         }
 
-        LOGI("FFT Complete for %zu samples.", n);
+        //LOGI("FFT Complete for %zu samples.", n);
     }
 }
